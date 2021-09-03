@@ -4,6 +4,7 @@ set -euo pipefail
 # USAGE: compiler OUT MESSAGE
 cat >&2 <<EOF
 ! Example compiler
+! Version {VERSION}
 ! Running on {EXEC_CPU} {EXEC_OS}
 ! Targetting {TARGET_CPU} {TARGET_OS}
 EOF
@@ -11,6 +12,7 @@ cat >"$1" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 echo >&2 '! Example program'
+echo >&2 '! Compiled by version {VERSION}'
 echo >&2 '! Compiled on {EXEC_CPU} {EXEC_OS}'
 echo >&2 '! Running on {TARGET_CPU} {TARGET_OS}'
 echo "${{@:2}}"
@@ -24,6 +26,7 @@ def _example_compiler_impl(ctx):
         executable,
         is_executable = True,
         content = _example_compiler_template.format(
+            VERSION = ctx.attr.version,
             EXEC_CPU = ctx.attr.exec_cpu.label.name,
             EXEC_OS = ctx.attr.exec_os.label.name,
             TARGET_CPU = ctx.attr.target_cpu.label.name,
@@ -38,6 +41,7 @@ def _example_compiler_impl(ctx):
 example_compiler = rule(
     _example_compiler_impl,
     attrs = {
+        "version": attr.string(mandatory = True),
         "exec_cpu": attr.label(),
         "exec_os": attr.label(),
         "target_cpu": attr.label(),

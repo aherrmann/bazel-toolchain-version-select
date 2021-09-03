@@ -1,33 +1,65 @@
 load("defs.bzl", "example_compiler", "example_toolchain")
 
 example_compiler(
-    name = "compiler_linux_x86_64",
+    name = "compiler_1_linux_x86_64",
     exec_cpu = "@platforms//cpu:x86_64",
     exec_os = "@platforms//os:linux",
     target_cpu = "@platforms//cpu:x86_64",
     target_os = "@platforms//os:linux",
+    version = "1",
     visibility = ["//visibility:public"],
 )
 
 example_compiler(
-    name = "compiler_linux_arm",
+    name = "compiler_1_linux_arm",
     exec_cpu = "@platforms//cpu:x86_64",
     exec_os = "@platforms//os:linux",
     target_cpu = "@platforms//cpu:arm",
     target_os = "@platforms//os:linux",
+    version = "1",
+    visibility = ["//visibility:public"],
+)
+
+example_compiler(
+    name = "compiler_2_linux_x86_64",
+    exec_cpu = "@platforms//cpu:x86_64",
+    exec_os = "@platforms//os:linux",
+    target_cpu = "@platforms//cpu:x86_64",
+    target_os = "@platforms//os:linux",
+    version = "2",
+    visibility = ["//visibility:public"],
+)
+
+example_compiler(
+    name = "compiler_2_linux_arm",
+    exec_cpu = "@platforms//cpu:x86_64",
+    exec_os = "@platforms//os:linux",
+    target_cpu = "@platforms//cpu:arm",
+    target_os = "@platforms//os:linux",
+    version = "2",
     visibility = ["//visibility:public"],
 )
 
 toolchain_type(name = "toolchain_type")
 
 example_toolchain(
-    name = "x86_64_toolchain",
-    compiler = ":compiler_linux_x86_64",
+    name = "1_x86_64_toolchain",
+    compiler = ":compiler_1_linux_x86_64",
 )
 
 example_toolchain(
-    name = "arm_toolchain",
-    compiler = ":compiler_linux_arm",
+    name = "1_arm_toolchain",
+    compiler = ":compiler_1_linux_arm",
+)
+
+example_toolchain(
+    name = "2_x86_64_toolchain",
+    compiler = ":compiler_2_linux_x86_64",
+)
+
+example_toolchain(
+    name = "2_arm_toolchain",
+    compiler = ":compiler_2_linux_arm",
 )
 
 toolchain(
@@ -40,7 +72,7 @@ toolchain(
         "@platforms//os:linux",
         "@platforms//cpu:x86_64",
     ],
-    toolchain = ":x86_64_toolchain",
+    toolchain = ":1_x86_64_toolchain",
     toolchain_type = ":toolchain_type",
 )
 
@@ -54,6 +86,6 @@ toolchain(
         "@platforms//os:linux",
         "@platforms//cpu:arm",
     ],
-    toolchain = ":arm_toolchain",
+    toolchain = ":1_arm_toolchain",
     toolchain_type = ":toolchain_type",
 )
