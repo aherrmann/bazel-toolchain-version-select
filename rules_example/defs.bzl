@@ -1,3 +1,8 @@
+load("@bazel_skylib//lib:paths.bzl", "paths")
+
+# --------------------------------------------------------------------
+# Toolchain
+
 _example_compiler_template = """\
 #!/usr/bin/env bash
 set -euo pipefail
@@ -68,6 +73,9 @@ example_toolchain = rule(
     },
 )
 
+# --------------------------------------------------------------------
+# Rules
+
 def _example_binary_impl(ctx):
     executable = ctx.actions.declare_file("{}.sh".format(ctx.label.name))
     ctx.actions.run(
@@ -90,4 +98,56 @@ example_binary = rule(
     },
     executable = True,
     toolchains = ["//rules_example:toolchain_type"],
+)
+
+# --------------------------------------------------------------------
+# Transitions
+
+def _example_transition_impl(settings, attr):
+    compiler_version = attr.compiler_version
+    return {"//rules_example/version": compiler_version}
+
+example_transition = transition(
+    implementation = _example_transition_impl,
+    inputs = [],
+    outputs = ["//rules_example/version"],
+)
+
+def _example_transition_binary_impl(ctx):
+    (_, extension) = paths.split_extension(ctx.executable.executable.path)
+    executable = ctx.actions.declare_file(
+        ctx.label.name + extension,
+    )
+    ctx.actions.symlink(
+        output = executable,
+        target_file = ctx.executable.executable,
+        is_executable = True,
+    )
+
+    runfiles = ctx.runfiles(files = [executable, ctx.executable.executable] + ctx.files.data)
+    runfiles = runfiles.merge(ctx.attr.executable[DefaultInfo].default_runfiles)
+    for data_dep in ctx.attr.data:
+        runfiles = runfiles.merge(data_dep[DefaultInfo].default_runfiles)
+
+    return [DefaultInfo(
+        executable = executable,
+        files = depset(direct = [executable]),
+        runfiles = runfiles,
+    )]
+
+example_transition_binary = rule(
+    _example_transition_binary_impl,
+    attrs = {
+        "_allowlist_function_transition": attr.label(
+            default = "@bazel_tools//tools/allowlists/function_transition_allowlist",
+        ),
+        "data": attr.label_list(allow_files = True),
+        "compiler_version": attr.string(),
+        "executable": attr.label(
+            cfg = "target",
+            executable = True,
+        ),
+    },
+    cfg = example_transition,
+    executable = True,
 )

@@ -1,6 +1,18 @@
-load("//rules_example:defs.bzl", "example_binary")
+load("//rules_example:defs.bzl", "example_binary", "example_transition_binary")
 
 example_binary(
     name = "hello",
     message = "Hello world",
+)
+
+example_transition_binary(
+    name = "hello_1",
+    compiler_version = "1",
+    executable = ":hello",
+)
+
+example_transition_binary(
+    name = "hello_2",
+    compiler_version = "2",
+    executable = ":hello",
 )
