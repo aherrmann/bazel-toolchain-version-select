@@ -1,0 +1,6 @@
+load("//rules_example:defs.bzl", "example_binary")
+
+example_binary(
+    name = "hello",
+    message = "Hello world",
+)
