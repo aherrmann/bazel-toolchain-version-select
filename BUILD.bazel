@@ -6,13 +6,29 @@ example_binary(
 )
 
 example_transition_binary(
-    name = "hello_1",
+    name = "hello_1_x86_64",
     compiler_version = "1",
     executable = ":hello",
+    platform = "//platforms:linux_x86_64",
 )
 
 example_transition_binary(
-    name = "hello_2",
+    name = "hello_2_x86_64",
     compiler_version = "2",
     executable = ":hello",
+    platform = "//platforms:linux_x86_64",
+)
+
+example_transition_binary(
+    name = "hello_1_arm",
+    compiler_version = "1",
+    executable = ":hello",
+    platform = "//platforms:linux_arm",
+)
+
+example_transition_binary(
+    name = "hello_2_arm",
+    compiler_version = "2",
+    executable = ":hello",
+    platform = "//platforms:linux_arm",
 )

@@ -104,13 +104,20 @@ example_binary = rule(
 # Transitions
 
 def _example_transition_impl(settings, attr):
+    platform = attr.platform
     compiler_version = attr.compiler_version
-    return {"//rules_example/version": compiler_version}
+    return {
+        "//command_line_option:platforms": platform,
+        "//rules_example/version": compiler_version,
+    }
 
 example_transition = transition(
     implementation = _example_transition_impl,
     inputs = [],
-    outputs = ["//rules_example/version"],
+    outputs = [
+        "//command_line_option:platforms",
+        "//rules_example/version",
+    ],
 )
 
 def _example_transition_binary_impl(ctx):
@@ -142,7 +149,8 @@ example_transition_binary = rule(
             default = "@bazel_tools//tools/allowlists/function_transition_allowlist",
         ),
         "data": attr.label_list(allow_files = True),
-        "compiler_version": attr.string(),
+        "platform": attr.string(mandatory = True),
+        "compiler_version": attr.string(mandatory = True),
         "executable": attr.label(
             cfg = "target",
             executable = True,
