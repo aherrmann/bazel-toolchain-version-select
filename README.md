@@ -119,8 +119,7 @@ Hello world
 Emulates cross-compilation from x86_64 to arm using compiler version 1:
 
 ```
-$ bazel run //:hello --platforms=//platforms:linux_arm --//rules_example/version
-=1
+$ bazel run //:hello --platforms=//platforms:linux_arm --//rules_example/version=1
 ...
 INFO: From Compiling Example binary hello.sh:
 ! Example compiler
